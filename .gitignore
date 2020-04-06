@@ -1,0 +1,13 @@
+.vscode/
+
+__pycache__/
+*.py[cod]
+
+/data/
+doc/
+R/
+ref/
+results/
+
+*.ipynb
+*.bat
