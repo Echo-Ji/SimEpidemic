@@ -107,14 +107,14 @@ def pred(init_S, TRUE, x0_init, label, delay, optimize=True, pred_length=0):
     else:
         if(label == 3):
             # x = np.array([-3.54890159e-10, 3.26319271e-06, 1.38017850e+02, 2.51030231e-01, -3.69255824e+01, 3.44165509e-02])
-            x[1] = x[1]*0.902
+            x[1] = x[1] * 0.902
         elif(label == 1):
             if(delay == 3):
-                x = np.array([1.44e-08, -1, -1, -1, 3.7e-2, 1.39e-03])
+                x = np.array([5.58e-08, -1, -1, 0.79e-01, 0.0055, 6.39e-03])
             elif(delay == 5):
-                x = np.array([1.25e-08, -1, -1, -1, 3.7e-02, 3.19e-03])
+                x = np.array([6.06e-08, -1, -1, 0.67e-01, 0.0053, 6.33e-03])
             elif(delay == 7):
-                x = np.array([1.29e-08, -1, -1, -1, 3.7e-2, 1.39e-03])
+                x = np.array([6.45e-08, -1, -1, 0.50e-01, 0.0056, 6.23e-03])
             # x = np.array([3.99e-08, 7.52e-09, 31.3, 3.34e-01, 1.92e-01, 1.19e-03]) # 8.3713
             # x = np.array([1.01e-07, 2.15e-09, 11.8, 5.68e-02, 3.17e-01, 5.49e-03]) # 11.212 initial
             # x = np.array([1.01e-07, 2.24e-09, 11.8, 3.85e-02, 2.66e-01, 5.49e-03]) # 11.212 modified
@@ -123,11 +123,11 @@ def pred(init_S, TRUE, x0_init, label, delay, optimize=True, pred_length=0):
             # x = np.array([1.29e-08, -1, 0.005, -1, 3.7e-2, 1.39e-03]) # delay 3
         elif(label == 2):
             if(delay == 3):
-                x = np.array([1.29e-08, -1, -1, -1, 1, 3.89e-03])
+                x = np.array([5.58e-08, -1, -1, 1.92e-01, 1, 3.72e-02])
             elif(delay == 5):
-                x = np.array([1.25e-08, -1, -1, -1, 1, 9.70e-02])
+                x = np.array([6.06e-08, -1, -1, 1.30e-01, 1, 3.69e-02])
             elif(delay == 7):
-                x = np.array([1.29e-08, -1, -1, -1, 1, 1.39e-03])
+                x = np.array([6.45e-08, -1, -1, 1.05e-1, 1, 3.70e-03])
             # x = np.array([1.4e-09, 2.5e-08, 2.73, 5.55e-02, 3.73e-01, 4.49e-02]) # 8.37
             # x = np.array([7.80e-08, 1.52e-08, 1.69, 3.85e-02, 9.96e-01, 6.37e-02]) # 11.212 initial
             # x = np.array([7.80e-08, 1.53e-08, 1.69, 3.85e-02, 9.98e-01, 6.37e-02]) # 11.212 modified
@@ -186,7 +186,7 @@ def sim():
     # data loading
     I = data_loader.load_I(start_date=start_date, end_date=end_date)
     R = data_loader.load_R(start_date=start_date, end_date=end_date)
-    U = data_loader.load_U(start_date=start_date, end_date=end_date)
+    U = data_loader.load_U(start_date=start_date, end_date=end_date, offset=delay)
     E = data_loader.load_E(start_date=start_date, end_date=end_date, offset=delay)
     assert len(I) == len(E)
     TRUE = np.stack((I, R, U, E), axis=-1)
@@ -238,7 +238,7 @@ def merge_draw(data_file):
     # data loading
     I = data_loader.load_I(start_date=start_date, end_date=end_date)
     R = data_loader.load_R(start_date=start_date, end_date=end_date)
-    U = data_loader.load_U(start_date=start_date, end_date=end_date)
+    U = data_loader.load_U(start_date=start_date, end_date=end_date, offset=delay)
     E = data_loader.load_E(start_date=start_date, end_date=end_date, offset=delay)
     assert len(I) == len(E)
     TRUE = np.stack((I, R, U, E), axis=-1)
@@ -257,5 +257,5 @@ if __name__ == "__main__":
         # sim(cur_stage=cur_stage, save_pred=save_pred, find_best=0, optimize=optimize)
         sim()
     else:
-        merge_draw()
+        merge_draw('pred_d{0}.csv'.format(delay))
     pass

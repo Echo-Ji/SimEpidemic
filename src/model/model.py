@@ -68,12 +68,29 @@ def get_u_confirm_rate(t):
             0.5       , 0.57142857, 0.57142857, 0.66666667]
     return rate[int(t)]
 
-def SEIISR_v_base_eqs(INPUT, t, beta, sigma, pho, epsilon, _lambda_, gamma):
+def SEIISR_v_base_eqs(INPUT, t, beta, sigma, pho, alpha, _lambda_, gamma):
     Y = np.zeros(len(INPUT))
     
     beta = max(beta, 0) 
     sigma = beta
-    # sigma = max(sigma, 0)  
+    if(delay == 3):
+        sigma_tr = 0.4847
+        # sigma_tr = np.exp(sigma_tr * get_tr(t) - 2.5474) * 1.2027
+        sigma_tr = np.exp(sigma_tr * get_tr(t) - 2.5474)
+        # sigma_tr = np.exp(sigma_tr * get_tr(t))
+    elif(delay == 5):
+        sigma_tr = 0.5314
+        # sigma_tr = np.exp(sigma_tr * get_tr(t) - 2.7621) * 1.2346
+        sigma_tr = np.exp(sigma_tr * get_tr(t) - 2.7621)
+        # sigma_tr = np.exp(sigma_tr * get_tr(t))
+    elif(delay == 7):
+        sigma_tr = 0.6171
+        # sigma_tr = np.exp(sigma_tr * get_tr(t) - 3.0087) * 1.2690
+        sigma_tr = np.exp(sigma_tr * get_tr(t) - 3.0087)
+        # sigma_tr = np.exp(sigma_tr * get_tr(t))
+    sigma = sigma * sigma_tr
+    sigma = min(sigma, 1)  
+    
     if(label == 1):
         # pho = max(pho, 0)
         pho = 0.002956        
@@ -81,21 +98,7 @@ def SEIISR_v_base_eqs(INPUT, t, beta, sigma, pho, epsilon, _lambda_, gamma):
         pho = 0.103893
     # pho = pho * 5
 
-    if(delay == 3):
-        alpha = 0.4847
-        # alpha = np.exp(alpha * get_tr(t) - 2.5474) * 1.2027
-        # alpha = np.exp(alpha * get_tr(t) - 2.7621)
-        alpha = np.exp(alpha * get_tr(t))
-    elif(delay == 5):
-        alpha = 0.5314
-        # alpha = np.exp(alpha * get_tr(t) - 2.7621) * 1.2346
-        # alpha = np.exp(alpha * get_tr(t) - 2.7621)
-        alpha = np.exp(alpha * get_tr(t))
-    elif(delay == 7):
-        alpha = 0.6171
-        # alpha = np.exp(alpha * get_tr(t) - 3.0087) * 1.2690
-        # alpha = np.exp(alpha * get_tr(t) - 2.7621)
-        alpha = np.exp(alpha * get_tr(t))
+    alpha = max(alpha, 0)
     alpha = min(alpha, 1)
     
     # epsilon = max(epsilon, 0)

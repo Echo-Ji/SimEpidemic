@@ -10,14 +10,14 @@
             "start_date": "2020-01-01",
             "end_date": "2020-01-22",
             "traffic_delay": 7,
-            "latent_delay": 5
+            "latent_delay": 3
         },
         {
             "label": 2,
             "start_date": "2020-01-23",
             "end_date": "2020-03-09",
             "traffic_delay": 7,
-            "latent_delay": 5
+            "latent_delay": 3
         },
         {
             "label": 3,
