@@ -1,23 +1,12 @@
 import scipy.integrate as spi
 import numpy as np
+from ..config import parse_config
 
-def SEIISR_base_eqs(INPUT, t, beta, sigma, epsilon, _lambda_, gamma):
-    Y = np.zeros((5))
-    #_lambda_ = np.exp((_lambda_ * (t - 6)))
-    #_lambda = (_lambda_ / (1 + _lambda_))
-    #print(_lambda_)
-    beta = max(beta, 0)
-    sigma = max(sigma, 0)
-    epsilon = max(epsilon, 0)
-    _lambda_ = max(_lambda_, 0)
-    gamma = max(gamma, 0)
-    Y[0] = - (beta * INPUT[0] * INPUT[2]) - (sigma * INPUT[0] * INPUT[1])
-    Y[1] = (beta * INPUT[0] * INPUT[2]) + (sigma * INPUT[0] * INPUT[1])  - (epsilon * INPUT[1])
-    Y[2] = ((1 - _lambda_) * (epsilon * INPUT[1])) - (gamma * INPUT[2])
-    Y[3] = (_lambda_ * epsilon * INPUT[1]) - (gamma * INPUT[3])
-    Y[4] = (gamma * INPUT[2]) + (gamma * INPUT[3])
-
-    return Y
+config = parse_config.read_config()
+globals().update(config)
+cur_stage = stage[csn]
+label = cur_stage['label']
+delay = cur_stage['latent_delay']
 
 def SEIISR_v_base_eqs_v0(INPUT, t, beta, sigma, pho, epsilon, _lambda_, gamma):
     Y = np.zeros((5))
@@ -42,46 +31,81 @@ def SEIISR_v_base_eqs_v0(INPUT, t, beta, sigma, pho, epsilon, _lambda_, gamma):
     return Y
 
 def get_tr(t):
-    # print(t)
-    # tr = [4.2826, 5.2757, 5.334 , 4.3842, 4.1317, 5.2662, 5.2815, 5.3214,
-    #    5.1513, 5.2171, 4.4613, 4.2045, 5.1656, 5.1121, 4.9132, 4.9241,
-    #    4.8733, 4.0436, 4.3249, 4.2152, 3.5992, 2.8838, 1.9621, 
-    #    1.2811, 0.8931, 0.6259, 0.6573, 0.6747, 0.6829, 0.6645, 0.6906,
-    #    0.6902, 0.6617, 0.693 , 0.6791, 0.6667, 0.6   , 0.6171, 0.609 ,
-    #    0.616 , 0.6168, 0.6076, 0.5958, 0.6191, 0.6714, 0.5963, 0.5791,
-    #    0.5928, 0.5785, 0.5739, 0.5907, 0.5968, 0.5687, 0.5693, 0.6197,
-    #    0.6107, 0.6198, 0.6085, 0.613 , 0.6184, 0.6157, 0.654 , 0.6523,
-    #    0.6699, 0.6743, 0.677 , 0.6507, 0.65  , 0.70]
-    # tr = [4.2826, 5.2757, 5.334 , 4.3842, 4.1317, 5.2662, 5.2815, 5.3214,
-    #    5.1513, 5.2171, 4.4613, 4.2045, 5.1656, 5.1121, 4.9132, 4.9241,
-    #    4.8733, 4.0436, 4.3249, 4.2152, 3.5992, 2.8838]
-    tr = [1.9621, 1.2811, 0.8931, 0.6259, 0.6573, 0.6747, 0.6829, 0.6645, 0.6906,
-       0.6902, 0.6617, 0.693 , 0.6791, 0.6667, 0.6   , 0.6171, 0.609 ,
-       0.616 , 0.6168, 0.6076, 0.5958, 0.6191, 0.6714, 0.5963, 0.5791,
-       0.5928, 0.5785, 0.5739, 0.5907, 0.5968, 0.5687, 0.5693, 0.6197,
-       0.6107, 0.6198, 0.6085, 0.613 , 0.6184, 0.6157, 0.654 , 0.6523,
-       0.6699, 0.6743, 0.677 , 0.6507, 0.65  , 0.70]
-    # tr = [1.2811, 0.8931, 0.6259, 0.6573, 0.6747, 0.6829, 0.6645, 0.6906,
-    #    0.6902, 0.6617, 0.693 , 0.6791, 0.6667, 0.6   , 0.6171, 0.609]
-    # tr = [0.616 , 0.6168, 0.6076, 0.5958, 0.6191, 0.6714, 0.5963, 0.5791,
-    #    0.5928, 0.5785, 0.5739, 0.5907, 0.5968, 0.5687, 0.5693, 0.6197,
-    #    0.6107, 0.6198, 0.6085, 0.613 , 0.6184, 0.6157, 0.654 , 0.6523,
-    #    0.6699, 0.6743, 0.677 , 0.6507, 0.65  , 0.70]
+    if(label == 1):
+        tr = [4.2826, 5.2757, 5.334 , 4.3842, 4.1317, 5.2662, 5.2815, 5.3214,
+            5.1513, 5.2171, 4.4613, 4.2045, 5.1656, 5.1121, 4.9132, 4.9241,
+            4.8733, 4.0436, 4.3249, 4.2152, 3.5992, 2.8838]
+    else:
+        tr = [1.9621, 1.2811, 0.8931, 0.6259, 0.6573, 0.6747, 0.6829, 0.6645, 0.6906,
+            0.6902, 0.6617, 0.693 , 0.6791, 0.6667, 0.6   , 0.6171, 0.609 ,
+            0.616 , 0.6168, 0.6076, 0.5958, 0.6191, 0.6714, 0.5963, 0.5791,
+            0.5928, 0.5785, 0.5739, 0.5907, 0.5968, 0.5687, 0.5693, 0.6197,
+            0.6107, 0.6198, 0.6085, 0.613 , 0.6184, 0.6157, 0.654 , 0.6523,
+            0.6699, 0.6743, 0.677 , 0.6507, 0.65  , 0.70,   0.72,   0.73,
+            0.73,   0.75,   0.71,   0.71,   0.81]
     if(t < len(tr)):
         return tr[int(t)]
     else:
         return 1.0
 
+def get_u_confirm_rate(t):
+    if(label == 1):
+        rate = [0.02759622, 0.02774166, 0.02969392, 0.03198433, 0.03280033,
+            0.03305785, 0.03607214, 0.0394453 , 0.03802771, 0.04226312,
+            0.044709  , 0.0421758 , 0.04411765, 0.04345299, 0.04776471,
+            0.04825654, 0.04863481, 0.04789978, 0.05276441, 0.05360206,
+            0.05654319, 0.05900053]
+    else:
+        rate = [0.06115577, 0.06518395, 0.06806335,
+            0.07166403, 0.07568763, 0.08193953, 0.08719403, 0.0895784 ,
+            0.10260375, 0.09670442, 0.10672868, 0.11505533, 0.12405707,
+            0.13183176, 0.13257773, 0.14565696, 0.16041379, 0.17075603,
+            0.17844346, 0.21074481, 0.23019969, 0.2389292 , 0.2194623 ,
+            0.2397541 , 0.29415042, 0.17375612, 0.31122995, 0.24715447,
+            0.25305739, 0.2492891 , 0.27672209, 0.27674024, 0.47606383,
+            0.38809035, 0.47983871, 0.46078431, 0.38693467, 0.57317073,
+            0.44274809, 0.37864078, 0.43298969, 0.53658537, 0.5106383 ,
+            0.5       , 0.57142857, 0.57142857, 0.66666667]
+    return rate[int(t)]
+
 def SEIISR_v_base_eqs(INPUT, t, beta, sigma, pho, epsilon, _lambda_, gamma):
-    Y = np.zeros((5))
-    beta = max(beta, 0) #* get_tr(t)
-    sigma = max(sigma, 0) #* get_tr(t) 
-    pho = max(pho, 0)
-    alpha = 0.6
-    epsilon = max(epsilon, 0)
+    Y = np.zeros(len(INPUT))
+    
+    beta = max(beta, 0) 
+    sigma = beta
+    # sigma = max(sigma, 0)  
+    if(label == 1):
+        # pho = max(pho, 0)
+        pho = 0.002956        
+    else:
+        pho = 0.103893
+    # pho = pho * 5
+
+    if(delay == 3):
+        alpha = 0.4847
+        # alpha = np.exp(alpha * get_tr(t) - 2.5474) * 1.2027
+        # alpha = np.exp(alpha * get_tr(t) - 2.7621)
+        alpha = np.exp(alpha * get_tr(t))
+    elif(delay == 5):
+        alpha = 0.5314
+        # alpha = np.exp(alpha * get_tr(t) - 2.7621) * 1.2346
+        # alpha = np.exp(alpha * get_tr(t) - 2.7621)
+        alpha = np.exp(alpha * get_tr(t))
+    elif(delay == 7):
+        alpha = 0.6171
+        # alpha = np.exp(alpha * get_tr(t) - 3.0087) * 1.2690
+        # alpha = np.exp(alpha * get_tr(t) - 2.7621)
+        alpha = np.exp(alpha * get_tr(t))
+    alpha = min(alpha, 1)
+    
+    # epsilon = max(epsilon, 0)
+    epsilon = get_u_confirm_rate(t)
+    
     _lambda_ = max(_lambda_, 0)
     _lambda_ = min(_lambda_, 1)
+    
     gamma = max(gamma, 0)
+    
     S = INPUT[0]
     E = INPUT[1]
     U = INPUT[2]
@@ -89,8 +113,8 @@ def SEIISR_v_base_eqs(INPUT, t, beta, sigma, pho, epsilon, _lambda_, gamma):
     IS = INPUT[4]
     R = INPUT[5]
     Y[0] = - (beta * S * I) - (sigma * S * max((U - (pho * IS)), 0.005*U))
-    Y[1] = (beta * S * I) + (sigma * S * max((U - (pho * IS)), 0.005*U)) - (np.exp(alpha * get_tr(t)) * E)
-    Y[2] = (np.exp(alpha * get_tr(t)) * E) - (epsilon * U)
+    Y[1] = (beta * S * I) + (sigma * S * max((U - (pho * IS)), 0.005*U)) - (alpha * E)
+    Y[2] = (alpha * E) - (epsilon * U)
     Y[3] = ((1 - _lambda_) * (epsilon * U)) - (gamma * I)
     Y[4] = (_lambda_ * (epsilon * U)) - (gamma * IS)
     Y[5] = (gamma * (I + IS))

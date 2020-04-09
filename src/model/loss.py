@@ -7,8 +7,11 @@ from sklearn.model_selection import ParameterGrid
 def SEIISR_loss(TRUE, PRED):
     # print(TRUE.shape, PRED.shape)
     # loss = np.log(np.cosh())
-    # return np.sum(np.square((TRUE[:, 0] - TRUE[:, 1]) - (PRED[:, 2] + PRED[:, 3]))) + np.sum(np.square(TRUE[:, 1] - PRED[:, 4])) + np.sum(np.square(TRUE[:, 2] - PRED[:, 1]))
-    return np.sum(np.square((TRUE[:, 0] + TRUE[:, 2]) - (PRED[:, 2] + PRED[:, 3] + PRED[:, 4] + PRED[:, 5]))) + np.sum(np.square(TRUE[:, 1] - PRED[:, 5])) + np.sum(np.square(TRUE[:, 3] - PRED[:, 1]))
+    # return np.sum(np.square((TRUE[:, 0] - TRUE[:, 1]) - (PRED[:, 3] + PRED[:, 4]))) + np.sum(np.square(TRUE[:, 1] - PRED[:, 5])) + np.sum(np.square(TRUE[:, 2] - PRED[:, 2]))
+    # return np.sum(np.square(TRUE[:, 3] - PRED[:, 1])) 
+    # + np.sum(np.square((TRUE[:, 0] - TRUE[:, 1]) - (PRED[:, 3] + PRED[:, 4]))) + np.sum(np.square(TRUE[:, 1] - PRED[:, 5]))
+    return np.sum(np.square((TRUE[:, 0] + TRUE[:, 2]) - (PRED[:, 2] + PRED[:, 3] + PRED[:, 4] + PRED[:, 5]))) + np.sum(np.square(TRUE[:, 1] - PRED[:, 5])) 
+    # + 0.5 * np.sum(np.square(TRUE[:, 3] - PRED[:, 1]))
     # return np.sum(np.log1p(np.abs((TRUE[:, 0] + TRUE[:, 2]) - (PRED[:, 1] + PRED[:, 2] + PRED[:, 3] + PRED[:, 4])))) + np.sum(np.log1p(np.abs(TRUE[:, 1] - PRED[:, 4])))
     # return np.sum(np.log(np.cosh((TRUE[:, 0] - TRUE[:, 1]) - (PRED[:, 2] + PRED[:, 3])))) + np.sum(np.log(np.cosh(TRUE[:, 1] - PRED[:, 4]))) + np.sum(np.log(np.cosh(TRUE[:, 2] - PRED[:, 1])))
     # return np.sum(np.square((TRUE[:, 0] - TRUE[:, 2]) - (PRED[:, 1] + PRED[:, 2] + PRED[:, 3] + PRED[:, 4])))
@@ -24,7 +27,7 @@ def optim_fun(args):
     x[5] = gamma
     '''
     v = lambda x: SEIISR_loss(TRUE,
-                              spi.odeint(SEIISR_v_base_eqs, (INPUT[0], INPUT[1], INPUT[2], INPUT[3], INPUT[4], INPUT[6]), t_range, args = (x[0], x[1], x[2], x[3], x[4], x[5])))
+                              spi.odeint(SEIISR_v_base_eqs, INPUT, t_range, args=(x[0], x[1], x[2], x[3], x[4], x[5])))
 
     return v
 

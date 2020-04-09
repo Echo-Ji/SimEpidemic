@@ -46,27 +46,44 @@ def load_I(city='武汉市', start_date='2020-01-18', end_date='2020-01-23'):
     I = df.loc[t1:t2]['infect'].values
     return I
 
-def load_U(city='武汉市', start_date='2020-01-18', end_date='2020-01-23'):
+def load_U(city='武汉市', start_date='2020-01-18', end_date='2020-01-23', offset=7):
     config = parse_config.read_config()
     globals().update(config)
     
-    offset = 7
     t1 = date.fromisoformat(start_date)
     t2 = date.fromisoformat(end_date)
-    I_t1 = t1 + timedelta(days=offset)
-    I_t2 = t2 + timedelta(days=offset)
-    print(t1, t2, I_t1, I_t2)
+    # I_t1 = t1 + timedelta(days=offset)
+    # I_t2 = t2 + timedelta(days=offset)
+    # print(t1, t2, I_t1, I_t2)
     
     file_name_1, file_name_2 = '1.csv', '2.csv'
     df = pd.read_csv(os.path.join(DATA_ROOT, file_name_1), index_col=0)
     df.index = pd.to_datetime(df.index)
-    I_all = df.loc[I_t1:I_t2]['infect'].values
-    # print(I_all)
+    # I_all = df.loc[I_t1:I_t2]['infect'].values
+    I_all = df.loc[t1:t2]['infect'].values
 
     df = pd.read_csv(os.path.join(DATA_ROOT, file_name_2), index_col=0)
     df.index = pd.to_datetime(df.index)
     I = df.loc[t1:t2]['infect'].values
-    print(len(I))
+    # print(len(I))
 
     U = (I_all - I) #.values
     return U
+
+def load_E(city='武汉市', start_date='2020-01-18', end_date='2020-01-23', offset=7):
+    config = parse_config.read_config()
+    globals().update(config)
+    
+    t1 = date.fromisoformat(start_date)
+    t2 = date.fromisoformat(end_date)
+    I_t1 = t1 + timedelta(days=offset)
+    I_t2 = t2 + timedelta(days=offset)
+    # print(t1, t2, I_t1, I_t2)
+    
+    file_name_1 = '1.csv'
+    df = pd.read_csv(os.path.join(DATA_ROOT, file_name_1), index_col=0)
+    df.index = pd.to_datetime(df.index)
+    E = df.loc[I_t1:I_t2]['infect'].values # t + offset 发病
+    # U = load_U(start_date=start_date, end_date=end_date) # t 未确诊
+    # U = df.loc[t1:t2]['infect'].values
+    return E
