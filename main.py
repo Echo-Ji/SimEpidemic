@@ -22,7 +22,7 @@ globals().update(config)
 
 sim = True
 optimize = False
-save_plot = True
+save_plot = False
 save_pred = False
 
 cur_stage = stage[csn]
@@ -126,8 +126,10 @@ def pred(init_S, TRUE, x0_init, label, delay, optimize=True, pred_length=0):
                 x = np.array([5.58e-08, -1, -1, 1.92e-01, 1, 3.72e-02])
             elif(delay == 5):
                 x = np.array([6.06e-08, -1, -1, 1.30e-01, 1, 3.69e-02])
+                # x = np.array([6.06e-08, -1, -1, 0.67e-01, 1, 3.69e-02])
+                # x = np.array([5.06e-08, -1, -1, 0.37e-01, 1, 3.69e-02])
             elif(delay == 7):
-                x = np.array([6.45e-08, -1, -1, 1.05e-1, 1, 3.70e-03])
+                x = np.array([1.45e-100, -1, -1, 1.05e-1, 1, 1.90e-02])
             # x = np.array([1.4e-09, 2.5e-08, 2.73, 5.55e-02, 3.73e-01, 4.49e-02]) # 8.37
             # x = np.array([7.80e-08, 1.52e-08, 1.69, 3.85e-02, 9.96e-01, 6.37e-02]) # 11.212 initial
             # x = np.array([7.80e-08, 1.53e-08, 1.69, 3.85e-02, 9.98e-01, 6.37e-02]) # 11.212 modified
@@ -171,7 +173,6 @@ def save(file_name, cases, start_date):
     df.to_csv(file_name, index=False)
     return 
 
-# def sim(cur_stage, save_pred=False, find_best=False, optimize=False):
 def sim():
     print()
     print('='*20)
