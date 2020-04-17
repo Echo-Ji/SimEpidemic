@@ -1,7 +1,9 @@
 {
     "DATA_ROOT": "C:\\Users\\Echo\\Desktop\\nCov\\SimEpidemic\\data",
     "FIG_ROOT": "C:\\Users\\Echo\\Desktop\\nCov\\SimEpidemic\\results\\figs",
+    "OUT_ROOT": "C:\\Users\\Echo\\Desktop\\nCov\\SimEpidemic\\results\\output",
     "city": "wuhan",
+    "model_name": "SEUIR",
     "csn": 2,
     "split_index": 22,
     "stage": [
@@ -11,7 +13,7 @@
             "start_date": "2020-01-01",
             "end_date": "2020-01-22",
             "traffic_delay": 7,
-            "latent_delay": 7
+            "latent_delay": 5
         },
         {
             "label": 2,
@@ -26,11 +28,11 @@
             "end_date": "2020-03-09"
         },
         {
-            "label": -1,
+            "label": 4,
             "start_date": "2020-01-01",
             "end_date": "2020-03-09",
             "traffic_delay": 7,
-            "latent_delay": 3
+            "latent_delay": 7
         }
     ]
 }

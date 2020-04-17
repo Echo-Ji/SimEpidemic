@@ -52,15 +52,17 @@ def load_U(city='武汉市', start_date='2020-01-18', end_date='2020-01-23', off
     
     t1 = date.fromisoformat(start_date)
     t2 = date.fromisoformat(end_date)
-    # I_t1 = t1 + timedelta(days=offset)
-    # I_t2 = t2 + timedelta(days=offset)
+    I_t1 = t1 + timedelta(days=offset)
+    I_t2 = t2 + timedelta(days=offset)
     # print(t1, t2, I_t1, I_t2)
     
     file_name_1, file_name_2 = '1.csv', '2.csv'
     df = pd.read_csv(os.path.join(DATA_ROOT, file_name_1), index_col=0)
     df.index = pd.to_datetime(df.index)
-    # I_all = df.loc[I_t1:I_t2]['infect'].values
-    I_all = df.loc[t1:t2]['infect'].values
+    if(model_name == 'SUIR'):
+        I_all = df.loc[I_t1:I_t2]['infect'].values
+    else:
+        I_all = df.loc[t1:t2]['infect'].values
 
     df = pd.read_csv(os.path.join(DATA_ROOT, file_name_2), index_col=0)
     df.index = pd.to_datetime(df.index)

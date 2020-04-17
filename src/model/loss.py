@@ -1,8 +1,13 @@
 import numpy as np
-from .model import SEIISR_v_base_eqs
 import scipy.integrate as spi
 from scipy.optimize import minimize
 from sklearn.model_selection import ParameterGrid
+
+from .model import SEIISR_v_base_eqs
+from ..config import parse_config
+
+config = parse_config.read_config()
+globals().update(config)
 
 def SEIISR_loss(TRUE, PRED):
     # print(TRUE.shape, PRED.shape)
@@ -10,7 +15,10 @@ def SEIISR_loss(TRUE, PRED):
     # return np.sum(np.square((TRUE[:, 0] - TRUE[:, 1]) - (PRED[:, 3] + PRED[:, 4]))) + np.sum(np.square(TRUE[:, 1] - PRED[:, 5])) + np.sum(np.square(TRUE[:, 2] - PRED[:, 2]))
     # return np.sum(np.square(TRUE[:, 3] - PRED[:, 1])) 
     # + np.sum(np.square((TRUE[:, 0] - TRUE[:, 1]) - (PRED[:, 3] + PRED[:, 4]))) + np.sum(np.square(TRUE[:, 1] - PRED[:, 5]))
-    return np.sum(np.square((TRUE[:, 0] + TRUE[:, 2]) - (PRED[:, 2] + PRED[:, 3] + PRED[:, 4] + PRED[:, 5]))) + np.sum(np.square(TRUE[:, 1] - PRED[:, 5])) 
+    if(model_name == 'SUIR'):
+        return np.sum(np.square((TRUE[:, 0] + TRUE[:, 2]) - (PRED[:, 1] + PRED[:, 2] + PRED[:, 3] + PRED[:, 4]))) + np.sum(np.square(TRUE[:, 1] - PRED[:, 4])) 
+    else:
+        return np.sum(np.square((TRUE[:, 0] + TRUE[:, 2]) - (PRED[:, 2] + PRED[:, 3] + PRED[:, 4] + PRED[:, 5]))) + np.sum(np.square(TRUE[:, 1] - PRED[:, 5]))
     # + 0.5 * np.sum(np.square(TRUE[:, 3] - PRED[:, 1]))
     # return np.sum(np.log1p(np.abs((TRUE[:, 0] + TRUE[:, 2]) - (PRED[:, 1] + PRED[:, 2] + PRED[:, 3] + PRED[:, 4])))) + np.sum(np.log1p(np.abs(TRUE[:, 1] - PRED[:, 4])))
     # return np.sum(np.log(np.cosh((TRUE[:, 0] - TRUE[:, 1]) - (PRED[:, 2] + PRED[:, 3])))) + np.sum(np.log(np.cosh(TRUE[:, 1] - PRED[:, 4]))) + np.sum(np.log(np.cosh(TRUE[:, 2] - PRED[:, 1])))

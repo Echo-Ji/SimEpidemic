@@ -20,7 +20,7 @@ from src.config import parse_config
 config = parse_config.read_config()
 globals().update(config)
 
-sim = True
+sim_flag = True
 optimize = False
 save_plot = False
 save_pred = False
@@ -87,12 +87,18 @@ def pred(init_S, TRUE, x0_init, label, delay, optimize=True, pred_length=0):
     print('='*20)
     print('Simulating the epidemic...')
     S0 = init_S
-    I0, R0, U0, E0 = TRUE[0]
+    if(model_name == 'SUIR'):
+        I0, R0, U0 = TRUE[0]
+    else:
+        I0, R0, U0, E0 = TRUE[0]
     I0 = I0 - R0
     S0 = S0 - np.sum(TRUE[0])
     if(I0 == 0.):
         I0 = 1
-    INPUT = (S0, E0, U0, 0.0, I0, R0)
+    if(model_name == 'SUIR'):
+        INPUT = (S0, U0, 0.0, I0, R0)
+    else:
+        INPUT = (S0, E0, U0, 0.0, I0, R0)
     print(INPUT)
 
     sim_length = len(TRUE[:, 0])
@@ -110,11 +116,11 @@ def pred(init_S, TRUE, x0_init, label, delay, optimize=True, pred_length=0):
             x[1] = x[1] * 0.902
         elif(label == 1):
             if(delay == 3):
-                x = np.array([5.58e-08, -1, -1, 0.79e-01, 0.0055, 6.39e-03])
+                x = np.array([5.58e-08, -1, 3e-05, 0.79e-01, 0.0055, 6.39e-03])
             elif(delay == 5):
-                x = np.array([6.06e-08, -1, -1, 0.67e-01, 0.0053, 6.33e-03])
+                x = np.array([6.06e-08, -1, 3e-05, 0.67e-01, 0.0053, 6.33e-03])
             elif(delay == 7):
-                x = np.array([6.45e-08, -1, -1, 0.50e-01, 0.0056, 6.23e-03])
+                x = np.array([6.45e-08, -1, 3e-05, 0.50e-01, 0.0056, 6.23e-03])
             # x = np.array([3.99e-08, 7.52e-09, 31.3, 3.34e-01, 1.92e-01, 1.19e-03]) # 8.3713
             # x = np.array([1.01e-07, 2.15e-09, 11.8, 5.68e-02, 3.17e-01, 5.49e-03]) # 11.212 initial
             # x = np.array([1.01e-07, 2.24e-09, 11.8, 3.85e-02, 2.66e-01, 5.49e-03]) # 11.212 modified
@@ -123,13 +129,13 @@ def pred(init_S, TRUE, x0_init, label, delay, optimize=True, pred_length=0):
             # x = np.array([1.29e-08, -1, 0.005, -1, 3.7e-2, 1.39e-03]) # delay 3
         elif(label == 2):
             if(delay == 3):
-                x = np.array([5.58e-08, -1, -1, 1.92e-01, 1, 3.72e-02])
+                x = np.array([5.59e-08, -1, 0.09, 1.92e-01, 1, 3.72e-02])
             elif(delay == 5):
-                x = np.array([6.06e-08, -1, -1, 1.30e-01, 1, 3.69e-02])
+                x = np.array([6.06e-08, -1, 0.11, 1.30e-01, 1, 3.69e-02])
                 # x = np.array([6.06e-08, -1, -1, 0.67e-01, 1, 3.69e-02])
                 # x = np.array([5.06e-08, -1, -1, 0.37e-01, 1, 3.69e-02])
             elif(delay == 7):
-                x = np.array([1.45e-100, -1, -1, 1.05e-1, 1, 1.90e-02])
+                x = np.array([6.45e-08, -1, 0.15, 1.05e-1, 1, 3.70e-02])
             # x = np.array([1.4e-09, 2.5e-08, 2.73, 5.55e-02, 3.73e-01, 4.49e-02]) # 8.37
             # x = np.array([7.80e-08, 1.52e-08, 1.69, 3.85e-02, 9.96e-01, 6.37e-02]) # 11.212 initial
             # x = np.array([7.80e-08, 1.53e-08, 1.69, 3.85e-02, 9.98e-01, 6.37e-02]) # 11.212 modified
@@ -180,8 +186,6 @@ def sim():
     S0 = 11.212e6
     start_date = cur_stage['start_date']
     end_date = cur_stage['end_date']
-    # label = cur_stage['label']
-    # delay = cur_stage['latent_delay']
     print('city: {0}, \npopulation: {1}, \nstart date: {2}, \nend date: {3}'.format(city, S0, start_date, end_date))
 
     # data loading
@@ -190,7 +194,10 @@ def sim():
     U = data_loader.load_U(start_date=start_date, end_date=end_date, offset=delay)
     E = data_loader.load_E(start_date=start_date, end_date=end_date, offset=delay)
     assert len(I) == len(E)
-    TRUE = np.stack((I, R, U, E), axis=-1)
+    if(model_name == 'SUIR'):
+        TRUE = np.stack((I, R, U), axis=-1)
+    else:
+        TRUE = np.stack((I, R, U, E), axis=-1)
     print('Time span (days): ', len(TRUE[:, 0]))
     print('True data:\n', TRUE)
     
@@ -220,7 +227,10 @@ def sim():
             TRUE_ALL = E
             plot_offset = 7
         else:
-            PRED_ALL = RES[:, 2] + RES[:, 3] + RES[:, 4] + RES[:, 5] # 发病 = U + I + IS + R
+            if(model_name == 'SUIR'):
+                PRED_ALL = RES[:, 1] + RES[:, 2] + RES[:, 3] + RES[:, 4] # 发病 = U + I + IS + R
+            else:
+                PRED_ALL = RES[:, 2] + RES[:, 3] + RES[:, 4] + RES[:, 5] # 发病 = U + I + IS + R
             TRUE_ALL = U + I #
             plot_offset = 0
 
@@ -228,13 +238,15 @@ def sim():
         plot_case(PRED=PRED_ALL, TRUE=TRUE_ALL, date_start=start_date, date_end=end_date, offset=plot_offset, 
             cityname='{0}-s{1}d{2}'.format(today, label, delay), save=save_plot)
         if(save_pred):
-            save(os.path.join(DATA_ROOT, '{0}.csv'.format(start_date)), PRED_ALL, start_date)
+            save(os.path.join(OUT_ROOT, 'pred_d{0}s{1}.csv'.format(delay, csn)), PRED_ALL, start_date)
     return 
 
-def merge_draw(data_file):
-    cur_stage = stage[-1]
+def merge_draw():
+    print()
+    print('='*20)
     start_date = cur_stage['start_date']
     end_date = cur_stage['end_date']
+    print('city: {0}, \nstart date: {1}, \nend date: {2}, \ndelay days: {3}.'.format(city, start_date, end_date, delay))
 
     # data loading
     I = data_loader.load_I(start_date=start_date, end_date=end_date)
@@ -242,21 +254,27 @@ def merge_draw(data_file):
     U = data_loader.load_U(start_date=start_date, end_date=end_date, offset=delay)
     E = data_loader.load_E(start_date=start_date, end_date=end_date, offset=delay)
     assert len(I) == len(E)
-    TRUE = np.stack((I, R, U, E), axis=-1)
+    if(model_name == 'SUIR'):
+        TRUE = np.stack((I, R, U), axis=-1)
+    else:
+        TRUE = np.stack((I, R, U, E), axis=-1)
     # print(len(TRUE[:, 0]), TRUE)
 
-    PRED_ALL = pd.read_csv(os.path.join(DATA_ROOT, data_file), index_col=0)['value'].values
+    # PRED_ALL = pd.read_csv(os.path.join(OUT_ROOT, data_file), index_col=0)['value'].values
+    PRED_ALL = []
+    for i in range(1, 3, 1):
+        data_file = 'pred_d{0}s{1}.csv'.format(delay, i)
+        PRED_ALL.extend(pd.read_csv(os.path.join(OUT_ROOT, data_file), index_col=0)['value'].values)
     TRUE_ALL = U + I # 
     
-    # today = dt.date.today()
+    plot_offset = 0
     plot_case(PRED=PRED_ALL, TRUE=TRUE_ALL, date_start=start_date, date_end=end_date, offset=plot_offset, 
-        cityname='{0}-s{1}d{2}'.format(today, label, delay), save=True)
+        cityname='all_{0}-d{1}'.format(today, delay), save=save_plot)
     return 
 
 if __name__ == "__main__":
-    if(sim):
-        # sim(cur_stage=cur_stage, save_pred=save_pred, find_best=0, optimize=optimize)
+    if(sim_flag):
         sim()
     else:
-        merge_draw('pred_d{0}.csv'.format(delay))
+        merge_draw()
     pass
