@@ -82,7 +82,7 @@ def load_E(city='武汉市', start_date='2020-01-18', end_date='2020-01-23', off
     # I_t2 = t2 + timedelta(days=offset)
     # print(t1, t2, I_t1, I_t2)
     
-    file_name_1 = '3.csv' # '1.csv'
+    file_name_1 = '3.csv' # 3.csv is the infection data calculated by onset and confirm # '1.csv'
     df = pd.read_csv(os.path.join(DATA_ROOT, file_name_1), index_col=0)
     df.index = pd.to_datetime(df.index)
     E = df.loc[t1:t2]['infect'].values
