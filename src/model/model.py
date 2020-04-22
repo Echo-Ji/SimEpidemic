@@ -7,6 +7,7 @@ globals().update(config)
 cur_stage = stage[csn]
 label = cur_stage['label']
 delay = cur_stage['latent_delay']
+tr_ban = policy['tr_ban']
 # print('split_index:', split_index)
 
 rate = [0.02759622, 0.02774166, 0.02969392, 0.03198433, 0.03280033,
@@ -24,7 +25,7 @@ rate = [0.02759622, 0.02774166, 0.02969392, 0.03198433, 0.03280033,
     0.44274809, 0.37864078, 0.43298969, 0.53658537, 0.5106383 ,
     0.5       , 0.57142857, 0.57142857, 0.66666667]
 
-tr_last = [3.7253, 3.5147, 4.3003, 4.4622, 4.2665, 4.3427, 4.419 , 3.702 ,
+tr_2019 = [3.7253, 3.5147, 4.3003, 4.4622, 4.2665, 4.3427, 4.419 , 3.702 ,
        3.45  , 4.1991, 4.1418, 4.1328, 4.2874, 4.152 , 3.488 , 3.2698,
        3.9469, 3.8103, 3.5881, 3.5472, 3.0917, 2.845 , 2.3166, 1.9864,
        2.031 , 2.0023, 1.894 , 1.9139, 1.9893, 2.1716, 2.9441, 3.3213,
@@ -35,7 +36,7 @@ tr_last = [3.7253, 3.5147, 4.3003, 4.4622, 4.2665, 4.3427, 4.419 , 3.702 ,
        3.8384, 4.5331, 4.5937, 4.6194, 4.5498, 4.7073, 4.0877, 3.8641,
        4.6319, 4.5567, 4.4931, 4.5133]
 
-tr = [4.2826, 5.2757, 5.334 , 4.3842, 4.1317, 5.2662, 5.2815, 5.3214,
+tr_2020 = [4.2826, 5.2757, 5.334 , 4.3842, 4.1317, 5.2662, 5.2815, 5.3214,
     5.1513, 5.2171, 4.4613, 4.2045, 5.1656, 5.1121, 4.9132, 4.9241,
     4.8733, 4.0436, 4.3249, 4.2152, 3.5992, 2.8838,
     1.9621, 1.2811, 0.8931, 0.6259, 0.6573, 0.6747, 0.6829, 0.6645, 0.6906,
@@ -45,6 +46,11 @@ tr = [4.2826, 5.2757, 5.334 , 4.3842, 4.1317, 5.2662, 5.2815, 5.3214,
     0.6107, 0.6198, 0.6085, 0.613 , 0.6184, 0.6157, 0.654 , 0.6523,
     0.6699, 0.6743, 0.677 , 0.6507, 0.65  , 0.70,   0.72,   0.73,
     0.73,   0.75,   0.71,   0.71,   0.81]
+
+if(tr_ban):
+    tr = tr_2020
+else:
+    tr = tr_2019
 
 def get_tr(t):
     if(label == 1):
@@ -65,7 +71,9 @@ def get_tr(t):
     #     return tr[int(t)]
     # else:
     #     return 1.0
-    return tr_last[idx]
+    if(idx >= len(tr)):
+        return 0.7
+    return tr[idx]
 
 def get_u_confirm_rate(t):
     if(label == 1):
@@ -76,6 +84,7 @@ def get_u_confirm_rate(t):
         #     0.04825654, 0.04863481, 0.04789978, 0.05276441, 0.05360206,
         #     0.05654319, 0.05900053]
     else:
+        # return 0.04216
         idx = int(t) + split_index
         # rate = [0.06115577, 0.06518395, 0.06806335,
         #     0.07166403, 0.07568763, 0.08193953, 0.08719403, 0.0895784 ,
@@ -87,6 +96,8 @@ def get_u_confirm_rate(t):
         #     0.38809035, 0.47983871, 0.46078431, 0.38693467, 0.57317073,
         #     0.44274809, 0.37864078, 0.43298969, 0.53658537, 0.5106383 ,
         #     0.5       , 0.57142857, 0.57142857, 0.66666667]
+    if(idx >= len(rate)):
+        return 0.6
     return rate[idx]
 
 def SUIR(INPUT, t, beta, sigma, pho, epsilon, _lambda_, gamma):
@@ -136,22 +147,26 @@ def SEUIR(INPUT, t, beta, sigma, pho, alpha, _lambda_, gamma):
     Y = np.zeros(len(INPUT))
     
     beta = max(beta, 0) 
-    sigma = beta
+    drop = sigma
     if(delay == 3):
         sigma_tr = 0.4847
         # sigma_tr = np.exp(sigma_tr * get_tr(t) - 2.5474) * 1.2027
         sigma_tr = np.exp(sigma_tr * get_tr(t) - 2.5474)
         # sigma_tr = np.exp(sigma_tr * get_tr(t))
     elif(delay == 5):
-        sigma_tr = 0.5314
+        # sigma_tr = 0.5314
+        sigma_tr = 0.5738 # incubation 6.41
         # sigma_tr = np.exp(sigma_tr * get_tr(t) - 2.7621) * 1.2346
-        sigma_tr = np.exp(sigma_tr * get_tr(t) - 2.7621)
+        # sigma_tr = np.exp(sigma_tr * get_tr(t) - 2.7621)
+        sigma_tr = np.exp(sigma_tr * get_tr(t) - 2.8489)
+        # sigma_tr = np.exp(sigma_tr * 5 * (1 - drop) - 2.8489)
         # sigma_tr = np.exp(sigma_tr * get_tr(t))
     elif(delay == 7):
         sigma_tr = 0.6171
         # sigma_tr = np.exp(sigma_tr * get_tr(t) - 3.0087) * 1.2690
         sigma_tr = np.exp(sigma_tr * get_tr(t) - 3.0087)
         # sigma_tr = np.exp(sigma_tr * get_tr(t))
+    sigma = beta
     sigma = sigma * sigma_tr
     sigma = min(sigma, 1)  
     

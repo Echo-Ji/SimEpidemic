@@ -78,14 +78,15 @@ def load_E(city='武汉市', start_date='2020-01-18', end_date='2020-01-23', off
     
     t1 = date.fromisoformat(start_date)
     t2 = date.fromisoformat(end_date)
-    I_t1 = t1 + timedelta(days=offset)
-    I_t2 = t2 + timedelta(days=offset)
+    # I_t1 = t1 + timedelta(days=offset)
+    # I_t2 = t2 + timedelta(days=offset)
     # print(t1, t2, I_t1, I_t2)
     
-    file_name_1 = '1.csv'
+    file_name_1 = '3.csv' # '1.csv'
     df = pd.read_csv(os.path.join(DATA_ROOT, file_name_1), index_col=0)
     df.index = pd.to_datetime(df.index)
-    E = df.loc[I_t1:I_t2]['infect'].values # t + offset 发病
+    E = df.loc[t1:t2]['infect'].values
+    # E = df.loc[I_t1:I_t2]['infect'].values # t + offset 发病
     # U = load_U(start_date=start_date, end_date=end_date) # t 未确诊
     # U = df.loc[t1:t2]['infect'].values
     return E

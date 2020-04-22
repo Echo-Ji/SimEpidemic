@@ -4,6 +4,11 @@
     "OUT_ROOT": "C:\\Users\\Echo\\Desktop\\nCov\\SimEpidemic\\results\\output",
     "city": "wuhan",
     "model_name": "SEUIR",
+    "policy": {
+        "tr_ban": 1,
+        "jnt_is": 1,
+        "hospital": 1
+    },
     "csn": 2,
     "split_index": 22,
     "stage": [
@@ -32,7 +37,7 @@
             "start_date": "2020-01-01",
             "end_date": "2020-03-09",
             "traffic_delay": 7,
-            "latent_delay": 7
+            "latent_delay": 5
         }
     ]
 }
